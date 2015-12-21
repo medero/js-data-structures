@@ -1,0 +1,69 @@
+<!doctype html>
+<script>
+// Hashing consists of finding a value in a data structure in the shortest time possible.
+
+var loseloseHashCode = function( key ) {
+    var hash = 0;
+    for ( var i = 0; i< key.length; i++ ) {
+        hash += key.charCodeAt(i);
+    }
+
+    return hash % 37;
+}
+
+function HashTable() {
+    var table = [];
+
+    this.put = function( key, value ) {
+        var position = loseloseHashCode( key );
+        console.log( position + ' - ' + key );
+        table[position] = value;
+    }
+
+    this.get = function( key ) {
+        return table[loseloseHashCode(key)];
+    }
+
+    this.remove = function(key) {
+        table[loseloseHashCode(key)] = undefined;
+    }
+
+    this.print = function() {
+        for ( var i = 0; i<table.length; ++i ) {
+            if ( table[i] !== undefined ) {
+                console.log(i + ': ' + table[i]);
+            }
+        }
+    }
+}
+
+var hash = new HashTable();
+hash.put('Gandalf', 'gandalf@email.com');
+hash.put('John', 'johnsnow@email.com');
+hash.put('Tyrion', 'tyrion@email.com');
+hash.put('Aaron', 'aaron@email.com');
+hash.put('Donnie', 'donnie@email.com');
+hash.put('Ana', 'ana@email.com');
+hash.put('Jonathan', 'jonathan@email.com');
+hash.put('Jamie', 'jamie@email.com');
+hash.put('Sue', 'sue@email.com');
+hash.put('Mindy', 'mindy@email.com');
+hash.put('Paul', 'paul@email.com');
+hash.put('Nathan', 'nathan@email.com');
+
+hash.print();
+
+/*
+We will have the following output on the console:
+5: sue@email.com
+10: nathan@email.com
+13: ana@email.com
+16: aaron@email.com
+19: gandalf@email.com
+29: johnsnow@email.com
+32: paul@email.com
+Jonathan , Jamie , and Sue have the same hash value, that is, 5 . As Sue was the
+last one to be added, Sue will be the one to occupy position 5 of HashTable . First,
+     Jonathan will occupy it, then Jamie will overwrite it, and Sue will overwrite
+     */
+</script>
