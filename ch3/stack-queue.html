@@ -1,0 +1,60 @@
+<!doctype html>
+<script>
+function Stack() {
+    var items = [];
+
+    this.push = function(element) {
+        return items.push(element);
+    }
+
+    this.pop = function() {
+        return items.pop();
+    }
+
+    this.grab = function() {
+        return items;
+    }
+
+    this.peek=function() {
+        return items[items.length-1];
+    }
+
+    this.isEmpty=function() {
+        return items.length == 0;
+    }
+
+    this.clear=function() {
+        items = [];
+    }
+
+    this.size=function() {
+        return items.length;
+    }
+
+    this.print = function() {
+        console.log( items.toString() );
+    }
+}
+
+function divideBy2( decNumber ) {
+    var remStack = new Stack,
+        rem,
+        binaryString= '';
+
+    window.remStack = remStack;
+
+    while ( decNumber > 0 ) {
+        rem = Math.floor( decNumber % 2 );
+        alert(rem);
+        remStack.push( rem );
+        decNumber = Math.floor( decNumber / 2 );
+        alert(decNumber);
+    }
+
+    //while ( !remStack.isEmpty() ) {
+        //binaryString += remStack.pop();
+    //}
+
+    return binaryString;
+}
+</script>
