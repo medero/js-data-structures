@@ -1,4 +1,6 @@
 <!doctype html>
+<script src="queue.js"></script>
+<script src="dict.js"></script>
 <script>
 /**
  *
@@ -29,6 +31,8 @@ function Graph() {
     var vertices = [];
     var adjList = new Dictionary;
 
+    window.adjList = adjList;
+
     this.addVertex = function(v) {
         vertices.push( v );
         adjList.set( v, [] );
@@ -52,57 +56,103 @@ function Graph() {
         return s;
     };
 
-}
+    var initializeColor = function() {
+        var color = [];
 
-function Dictionary() {
-    var items = {};
+        window.color = color;
 
-    this.set = function( key, value ) {
-        items[key] = value;
+        for ( var i = 0; i<vertices.length; i++ ) {
+            color[vertices[i]] = 'white';
+        }
+        return color;
     }
 
-    this.remove = function( key) {
-        if ( this.has( key ) ) {
-            delete items[key];
-            return true;
+    this.bfs = function( v, callback ) {
+
+        var color = initializeColor(),
+            queue = new Queue();
+
+        queue.enqueue(v);
+
+        while ( !queue.isEmpty() ) {
+            var u = queue.dequeue(),
+                neighbors = adjList.get(u);
+
+            color[u] = 'grey';
+
+            for ( var i = 0; i<neighbors.length; i++ ) {
+                var w = neighbors[i];
+
+                if ( color[w] === 'white' ) {
+                    color[w] = 'grey';
+                    queue.enqueue(w);
+                }
+            }
+
+            color[u] = 'black';
+            if ( callback ) {
+                callback(u);
+            }
+        }
+    }
+
+    this.dfs = function( callback ) {
+        var color = initializeColor();
+
+        for ( var i = 0; i<vertices.length; ++i ) {
+            if ( color[vertices[i]] === 'white' ) {
+                dfsVisit(vertices[i], color, callback);
+            }
+        }
+    }
+
+    var time = 0;
+    this.DFS = function() {
+        var color = initializeColor(),
+            d = [],
+            f = [],
+            p = [];
+
+        time = 0;
+
+        for ( var i = 0; i<vertices.length; i++ ) {
+            f[vertices[i]] = 0;
+            d[vertices[i]] = 0;
+            p[vertices[i]] = null;
         }
 
-        return false;
-    }
-
-    this.has = function( key ) {
-        return items.hasOwnProperty (key);
-    }
-
-    this.get = function( key ) {
-        return this.has(key) ? items[key] : undefined;
-    }
-
-    this.clear = function() {
-        items = {};
-    }
-
-    this.size = function() {
-        return Object.keys( items ).length;
-    }
-
-    this.keys = function() {
-        return Object.keys( items );
-    }
-
-    this.getItems = function() {
-        return items;
-    }
-
-    this.values = function() {
-        var ret = [], keys = Object.keys( items );
-
-        for ( var i = 0, l = keys.length; i<l; ++i ) {
-            ret.push( items[keys[i]] );
+        for ( i = 0; i<vertices.length; i++ ) {
+            if ( color[vertices[i]] === 'white' ) {
+                DFSVisit(vertices[i], color, d, f, p );
+            }
         }
 
-        return ret;
+        return {
+            discovery: d,
+            finished: f,
+            predecessors: p
+        };
     }
+
+    var DFSVisit = function( u, color, d, f, p ) {
+        console.log(' discovered ' + u );
+        color[u] = 'grey';
+        d[u] = ++time;
+        var neighbors = adjList.get(u);
+        for ( var i = 0; i<neighbors.length; i++ ) {
+            var w = neigbors[i];
+            if ( color[w] === 'white' ) {
+                p[w] = u;
+                DFSVisit( w, color, d, f, p );
+            }
+        }
+        color[u] = 'black';
+        f[u] = ++time;
+        console.log( 'explored ' + u );
+    }
+
+    var dfsVisit = function( u, color, callback ) { };
+
 }
 
 var graph = new Graph();
@@ -121,4 +171,11 @@ graph.addEdge('D', 'H');
 graph.addEdge('B', 'E');
 graph.addEdge('B', 'F');
 graph.addEdge('E', 'I');
+
+function printNode(value){
+    console.log('Visited vertex: ' + value);
+}
+
+graph.bfs(myVertices[0], printNode);
+
 </script>
