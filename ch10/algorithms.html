@@ -54,24 +54,6 @@ function ArrayList() {
         }
     };
 
-
-    var mergeSortRec = function(array) {
-        var length = array.length;
-        if ( length === 1 ) {
-            return array;
-        }
-
-        var mid = Math.floor( length / 2 ),
-            left = array.slice( 0, mid ),
-            right = array.slice( mid, length );
-
-        return merge( mergeSortRec(left), mergeSortRec(right) );
-    };
-
-    this.mergeSort = function() {
-        array = mergeSortRec(array);
-    };
-
     this.insertionSort = function() {
         var length = array.length,
             j, temp;
@@ -92,6 +74,157 @@ function ArrayList() {
         array[index1] = array[index2];
         array[index2] = aux;
     };
+
+
+    var mergeSortRec = function(array) {
+        var length = array.length;
+        if ( length === 1 ) {
+            return array;
+        }
+
+        var mid = Math.floor( length / 2 ),
+            left = array.slice( 0, mid ),
+            right = array.slice( mid, length );
+
+        return merge( mergeSortRec(left), mergeSortRec(right) );
+    };
+
+    /*
+     * The Merge Sort is the first algorithm that can be used practically
+     * The merge sort gives good performance compared to the insertion, selection, and bubble sort
+     * The complexity is O(n log n)
+     *
+     * The Javascript Array class defines a sort function. 
+     * ECMASCript does not define which sorting algorithm needs to be used so each browser can implement its own
+     * Firefox uses a merge sort, while Chrome uses a quick sort variation
+    */
+    this.mergeSort = function() {
+        array = mergeSortRec(array);
+    };
+
+    var merge = function( left, right ) {
+        var result = [],
+            il = 0;
+            ir = 0;
+
+        while ( il < left.length && ir < right.length ) {
+            if ( left[il] < right[il] ) {
+                result.push( left[il++] );
+            } else {
+                result.push( right[ir++] );
+            }
+        }
+
+        while ( il < left.length ) {
+            result.push( left[il++] );
+        }
+
+        while ( ir < right.length ) {
+            result.push( right[ir++] );
+        }
+
+        return result;
+    };
+
+    /* The Quick Sort 
+     * This is the most popular algorithm. It has a complexity of O(n log n)
+     * and usually performs better than other O(n log n) sorting algorithms
+     * It uses the divide and conquer approach like the merge sort,
+     * but without splitting them
+     * */
+
+    this.quickSort = function() {
+        quick( array, 0, array.length -1 );
+    };
+
+    var quick = function( array, left, right ) {
+        var index;
+
+        if ( array.length > 1 ) {
+            index = partition ( array, left, right );
+
+            if ( left < index - 1 ) {
+                quick( array, left, index - 1 );
+            }
+
+            if ( index < right ) {
+                quick ( array, index, right );
+            }
+        }
+    }
+
+    var partition = function( array, left, right ) {
+
+        var pivot = array[ Math.floor((right+left) / 2)],
+            i = left,
+            j = right;
+
+        while ( i <= j ) {
+            while ( array[i] < pivot ) {
+                i++;
+            }
+
+            while ( array[j] > pivot ) {
+                j--;
+            }
+
+            if ( i<= j ) {
+                swapQuickSort( array, i, j );
+                i++;
+                j--;
+            }
+        }
+        return i;
+    };
+
+    var swapQuickSort  = function ( array, index1, index2 ) {
+        var aux = array[index1];
+        array[index1] = array[index2];
+        array[index2] = aux;
+    };
+
+    /**
+     * The sequential search is the most basic search algorithm. 
+     * It consists of comparing each element of the data structure with the one we are looking for
+     * It's the most inefficient one
+     */
+    this.sequentialSearch = function ( item ) {
+        for ( var i = 0; i<array.length; i++ ) {
+            if ( item === array[i] ) {
+                return i;
+            }
+        }
+    };
+
+    /**
+     * The binary search works similar to a number guessing game,
+     * someone asks you to think of a number between 1 and 100
+     * We begin by responding with a number and the person will say higher, lower or we got it right
+     *
+     * To make this work, the data structure needs to be sorted first
+     */
+
+    this.binarySearch = function(item) {
+        this.quickSort();
+
+        var low = 0,
+            high = array.length - 1,
+            mid, element;
+
+        while ( low <= high ) {
+            mid = Math.floor( (low + high) / 2 );
+            element = array[mid];
+            if ( element < item ) {
+                low = mid + 1;
+            } else if ( element > item ) {
+                high = mid - 1;
+            } else {
+                return mid;
+            }
+        }
+        return -1;
+    };
+
 };
 
 function createNonSortedArray( size ) {
